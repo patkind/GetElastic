@@ -1,0 +1,30 @@
+﻿<Window x:Name ="GetElastic" x:Class="MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GetElastic"
+        mc:Ignorable="d"
+        Title="elastic cluster info" Height="600" Width="900">
+    <Grid x:Name="elasticStatus" Margin="0,0,0,0">
+        <Button x:Name="btnConnect" Content="Connect" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="80,89,0,0"/>
+        <Button x:Name="btnQuit" Content="Quit" HorizontalAlignment="Left" Margin="779,509,0,0" VerticalAlignment="Top" Width="75"/>
+        <Ellipse x:Name="elipStatus" Fill="Lime" HorizontalAlignment="Left" Height="75" Margin="560,50,0,0" Stroke="Black" VerticalAlignment="Top" Width="75"/>
+        <Button x:Name="btnTest" Content="Test" HorizontalAlignment="Left" Margin="223,28,0,0" VerticalAlignment="Top" Width="75"/>
+        <Label x:Name="lblStatus" Content="Status" HorizontalAlignment="Left" Margin="573,19,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="lblIP" Content="IP-Address" HorizontalAlignment="Left" Margin="13,25,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="lblPort" Content="Port" HorizontalAlignment="Left" Margin="13,53,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.442,2.36"/>
+        <TextBox x:Name="txtIP" HorizontalAlignment="Left" Height="23" Margin="80,29,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" RenderTransformOrigin="0.507,1.176" Text="10.10.77.182"/>
+        <TextBox x:Name="txtPort" HorizontalAlignment="Left" Height="23" Margin="80,57,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Text="8041"/>
+        <Label x:Name="lblShards" Content="Shards" HorizontalAlignment="Left" Margin="13,133,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.442,2.36"/>
+        <TextBox x:Name="txtShards" HorizontalAlignment="Left" Height="23" Margin="80,137,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Background="WhiteSmoke" IsEnabled="False"/>
+        <Label x:Name="lblReplicas" Content="Replicas" HorizontalAlignment="Left" Margin="236,133,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.442,2.36"/>
+        <TextBox x:Name="txtReplicas" HorizontalAlignment="Left" Height="23" Margin="303,137,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Background="WhiteSmoke" IsEnabled="False"/>
+        <Button x:Name="btnTest2" Content="Test2" HorizontalAlignment="Left" Margin="303,28,0,0" VerticalAlignment="Top" Width="75"/>
+        <Button x:Name="btnWriteXML" Content="Write XML" HorizontalAlignment="Left" Margin="383,28,0,0" VerticalAlignment="Top" Width="75"/>
+        <Label x:Name="lblIndexName" Content="Indexname" HorizontalAlignment="Left" Margin="125,206,0,0" VerticalAlignment="Top" FontWeight="Bold" ToolTip="Name des Indexes" Width="74" Height="25" Padding="0,5,5,5"/>
+        <Button x:Name="btnAddLabel" Content="Add Label" HorizontalAlignment="Left" Margin="266,79,0,0" VerticalAlignment="Top" Width="75"/>
+        <ProgressBar x:Name="pgRefreshShards" HorizontalAlignment="Left" Height="20" Margin="681,89,0,0" VerticalAlignment="Top" Width="173" Maximum="25" IsTabStop="False" IsIndeterminate="True" LargeChange="0.5" Cursor="None" IsEnabled="False" Value="2"/>
+
+    </Grid>
+</Window>
