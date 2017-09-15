@@ -13,6 +13,7 @@ Class MainWindow
     Dim dispatcherTimer As DispatcherTimer = New DispatcherTimer()
     Public Rows As List(Of RowFactory)
     Public iLabels As New List(Of Integer)
+    Public sShards As String
 #End Region
 
     Public Function CreateShards()
@@ -49,8 +50,10 @@ Class MainWindow
         setElipStatusVisibility(elastichealth.status.value)
 
         'Setzen der Anzahl von Shards und Replica
-        txtShards.Text = elasticsettings.enaioblue.settings.index.number_of_shards.value
+        sShards = elasticsettings.enaioblue.settings.index.number_of_shards.value
+        txtShards.Text = sShards
         txtReplicas.Text = elasticsettings.enaioblue.settings.index.number_of_replicas.value
+        txtDocCount.Text = GetDocumentCount(sShards).ToString
 
         'Erzeugen der Reihen und Rückgabe an den Aufrufenden
         Return createRowData(elasticcatshard)
@@ -60,18 +63,18 @@ Class MainWindow
     Public Sub RefreshShards()
         'Funktion zum Refreshen der Shard-Labels
         'Aktuell deaktiviert ist das Refreshen der Anzahl von Shards und Replica
-        '  Dim sResult As String = ""
+        Dim sResult As String = ""
         Dim sResult2 As String = ""
         Dim sResult3 As String = ""
         log.Debug("Start")
 
-        ' Dim elasticsettings As ElasticClusterSettings
+        '  Dim elasticsettings As ElasticClusterSettings
         Dim elastichealth As ElasticClusterHealth
         Dim elasticcatshard As ElasticCatShards
 
         'Holen der notwendigen JSON-Dateien
         Try
-            'sResult = GetJSONHttp("/enaioblue_*/_settings/index.number_of_")
+            '  sResult = GetJSONHttp("/enaioblue_*/_settings/index.number_of_")
             '  log.Debug("-----")
             sResult2 = GetJSONHttp("/_cluster/health")
             log.Debug("-----")
@@ -91,8 +94,11 @@ Class MainWindow
         setElipStatusVisibility(elastichealth.status.value)
 
         'Setzen der Anzahl von Shards und Replica
-        ' txtShards.Text = elasticsettings.enaioblue.settings.index.number_of_shards.value
+
+        ' sShards = elasticsettings.enaioblue.settings.index.number_of_shards.value
+        'txtShards.Text = sShards
         ' txtReplicas.Text = elasticsettings.enaioblue.settings.index.number_of_replicas.value
+        txtDocCount.Text = GetDocumentCount(sShards).ToString
 
         'Erzeugen der Reihen und Rückgabe an den Aufrufenden
         updateRowData(elasticcatshard)

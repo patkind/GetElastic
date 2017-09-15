@@ -106,6 +106,26 @@ Module HelperClass
         Return sReturn
     End Function
 
+    Function GetDocumentCount(sShards As String) As Integer
+        Dim iDocCount As Integer = 0
+        Dim elasticcatshard As ElasticCatShards
+        Dim sResult3 As String = ""
+        Try
+            log.Debug("GetDocumentCount")
+            sResult3 = GetJSONHttp("/_cat/shards?format=json")
+        Catch ex As Exception
+            log.Error(gsIPAdress)
+            log.Error(ex)
+        End Try
+        Int32.Parse(sShards)
+        elasticcatshard = New ElasticCatShards(Converter.JsonToXML(sResult3))
+        For i = 0 To Int32.Parse(sShards) - 1
+            iDocCount += Int32.Parse(elasticcatshard.GetByIndex("enaioblue_0", i, False)(0).docs.value)
+            log.Debug(iDocCount)
+        Next
+        Return iDocCount
+    End Function
+
 #Region "Testing"
     Function WriteXML()
         Dim enc As New System.Text.UTF8Encoding

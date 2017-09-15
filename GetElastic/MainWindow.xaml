@@ -25,6 +25,7 @@
         <Label x:Name="lblIndexName" Content="Indexname" HorizontalAlignment="Left" Margin="125,206,0,0" VerticalAlignment="Top" FontWeight="Bold" ToolTip="Name des Indexes" Width="74" Height="25" Padding="0,5,5,5"/>
         <Button x:Name="btnAddLabel" Content="Add Label (old)" HorizontalAlignment="Left" Margin="266,79,0,0" VerticalAlignment="Top" Width="92"/>
         <ProgressBar x:Name="pgRefreshShards" HorizontalAlignment="Left" Height="20" Margin="681,89,0,0" VerticalAlignment="Top" Width="173" Maximum="25" IsTabStop="False" IsIndeterminate="True" LargeChange="0.5" Cursor="None" IsEnabled="False" Value="2"/>
+        <TextBox x:Name="txtDocCount" HorizontalAlignment="Left" Height="23" Margin="399,89,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Background="WhiteSmoke" IsEnabled="False"/>
 
     </Grid>
 </Window>

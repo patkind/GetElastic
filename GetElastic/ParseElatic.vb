@@ -2662,6 +2662,19 @@ Public Class ElasticCatShards
         Return nodesByindex.ToList()
     End Function
 
+    Public Function GetByIndex(ByVal index As String, ByVal shard As Integer, ByVal replic As Boolean) As List(Of ElasticCatShardsItem)
+        Dim prirep As String = "p"
+        If replic Then
+            prirep = "r"
+        End If
+        Dim nodesByindex = From item In _items
+                           Where item.index.value = index
+                           Where item.shard.value = shard
+                           Where item.prirep.value = prirep
+
+            Return nodesByindex.ToList()
+    End Function
+
     Public Function GetByIP(ByVal ip As String) As List(Of ElasticCatShardsItem)
         Dim nodesByIp = From item In _items
                         Where item.ip.value = ip
