@@ -1,12 +1,9 @@
-﻿Imports System.Data
-Imports System.IO
-Imports System.Net
-Imports System.Text
-Imports System.Web.Script.Serialization
+﻿Imports System.Text
 Imports System.Xml
-Imports System.Runtime.Serialization
 Imports System.Runtime.Serialization.Json
 Imports Microsoft.Win32
+Imports System.Net
+Imports System.IO
 
 Public Class Converter
 
@@ -27,159 +24,89 @@ End Class
 
 Module HelperClass
     Public gsIPAdress As String
+    Private ReadOnly log As log4net.ILog = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType)
 
-    Function GetClusterState()
-        Try
-            Dim webClient As New System.Net.WebClient
-            Dim sResult As String = webClient.DownloadString("http://" + gsIPAdress + "/enaioblue_*/_settings/index.number_of_*")
-            Dim sReplicas = Strings.Mid(sResult, (Strings.InStr(sResult, "cas") + 6))
-            sReplicas = Strings.Left(sReplicas, (Strings.InStr(sReplicas, "}") - 2))
-            Dim sShards = Strings.Mid(sResult, (Strings.InStr(sResult, "rds") + 6))
-            sShards = Strings.Left(sShards, (Strings.InStr(sShards, ",") - 2))
-            sResult = ""
-            sResult = webClient.DownloadString("http://" + gsIPAdress + "/_cluster/health")
-            Dim sHealth As String = Strings.Mid(sResult, Strings.InStr(sResult, "tus") + 6)
-            sHealth = Strings.Left(sHealth, Strings.InStr(sHealth, ",") - 2)
-            Dim aResult(2) As String
-            aResult(0) = sReplicas
-            aResult(1) = sShards
-            aResult(2) = sHealth
-            Return (aResult)
-        Catch ex As Exception
-            Return ("Fehler")
-        End Try
+    Function GetJSONHttp(sURL As String)
+        'Funktion zum Holen von JSON-Dateien, übergeben werden muss der Pfad nach Host und Port
+        Dim sResult As String = ""
+        Dim hRequest As WebRequest
+        Dim hResult As WebResponse
+        Dim responseFromServer As String = ""
+        Dim dataStream As Stream
+        Dim reader As StreamReader
+        Log.Debug(gsIPAdress + sURL)
+        hRequest = WebRequest.Create(gsIPAdress + sURL)
+        hResult = hRequest.GetResponse()
+        dataStream = hResult.GetResponseStream()
+        reader = New StreamReader(dataStream)
+        sResult = reader.ReadToEnd()
+        Log.Debug("neu")
+        Log.Debug(sResult)
+        Log.Debug("#-#-#")
+        Return sResult
+        reader.Close()
+        hResult.Close()
+
     End Function
 
-    Function getCluster() As XmlDocument
-        Dim webClient As New System.Net.WebClient
-        Dim sResult As String = webClient.DownloadString("http://" + gsIPAdress + "/enaioblue_*/_settings/")
-        Dim xmlDoc As Xml.XmlDocument
+    Public Sub PutReplica(iNumber)
+        Dim s As HttpWebRequest
+        Dim enc As UTF8Encoding
+        Dim postdata As String
+        Dim postdatabytes As Byte()
+        s = HttpWebRequest.Create("http://10.10.77.182:8041/_settings")
+        enc = New System.Text.UTF8Encoding()
+        postdata = "{index:{number_of_replicas:" & iNumber & "}}"
+        postdatabytes = enc.GetBytes(postdata)
+        s.Method = "PUT"
+        s.ContentType = "application/x-www-form-urlencoded"
+        s.ContentLength = postdatabytes.Length
 
-        xmlDoc = Converter.JsonToXML(sResult)
-        Return xmlDoc
-    End Function
+        Using stream = s.GetRequestStream()
+            stream.Write(postdatabytes, 0, postdatabytes.Length)
+        End Using
+        Dim result = s.GetResponse()
+    End Sub
 
-    Function PutReplicaUp() As String
-        Try
-            Dim uri As String = "http://" + gsIPAdress + "/enaioblue_0/_settings"
-            Dim data = Encoding.UTF8.GetBytes("{index:{number_of_replicas:2}}")
-            Dim result_post = SendRequest(uri, data, "application/json", "POST")
-            Return (0)
-            'Dim someurl As String = ("http://" + gsIPAdress + "/enaioblue_0/_settings")
-            'Using client As New Net.WebClient
-            '    Dim reqparm As New Specialized.NameValueCollection
-            '    reqparm.Add("number_of_replicas", "2")
-            '    'reqparm.Add("param2", "othervalue")
-            '    Dim responsebytes = client.UploadValues(someurl, "POST", reqparm)
-            '    Dim responsebody = (New Text.UTF8Encoding).GetString(responsebytes)
-            'End Using
-
-            'Dim sResult As String = webRequest.DownloadString("http://" + gsIPAdress + "/enaioblue_*/_settings/index.number_of_replicas")
-            ' Dim sSplit = Strings.Mid(sResult, (Strings.InStr(sResult, "cas") + 6))
-            'sSplit = Strings.Left(sSplit, (Strings.InStr(sSplit, "}") - 2))
-            ' Dim iSplit As Integer = Convert.ToInt32(sSplit) + 1
-            'Return (iSplit)
-        Catch ex As Exception
-            MsgBox(ex)
-            Return ("0")
-        End Try
-    End Function
-
-    Function GetElasticInstall() As Boolean
+    Function GetElasticInstall() As String()
         Dim regKey As RegistryKey
+        Dim sPathElatic As String = ""
+        Dim lines() As String
+        Dim sReturn(1) As String
+
         Try
             regKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64)
             regKey = regKey.OpenSubKey("SOFTWARE\OPTIMAL SYSTEMS\elasticsearch", False)
-            Return True
-        Catch
-            Return False
-        End Try
-
-    End Function
-
-    Function PutReplicaDown()
-        Try
-            Dim uri As String = "http://" + gsIPAdress + "/enaioblue_0/_settings"
-            Dim data = Encoding.UTF8.GetBytes("{index:{number_of_replicas:2}}")
-            Dim result_post = SendRequest(uri, data, "application/json", "POST")
-            Return (0)
-            'Dim someurl As String = ("http://" + gsIPAdress + "/enaioblue_0/_settings")
-            'Using client As New Net.WebClient
-            '    Dim reqparm As New Specialized.NameValueCollection
-            '    reqparm.Add("number_of_replicas", "1")
-            '    'reqparm.Add("param2", "othervalue")
-            '    Dim responsebytes = client.UploadValues(someurl, "POST", reqparm)
-            '    Dim responsebody = (New Text.UTF8Encoding).GetString(responsebytes)
-            'End Using
-            'Dim webClient As New System.Net.WebClient
-            'Dim sResult As String = webClient.DownloadString("http://" + gsIPAdress + "/enaioblue_*/_settings/index.number_of_replicas")
-            'Dim sSplit = Strings.Mid(sResult, (Strings.InStr(sResult, "cas") + 6))
-            'sSplit = Strings.Left(sSplit, (Strings.InStr(sSplit, "}") - 2))
-            'Dim iSplit As Integer = Convert.ToInt32(sSplit) - 1
-            'Return (iSplit)
-        Catch ex As Exception
-            'MsgBox(ex)
-            Return (ex)
-        End Try
-    End Function
-
-    Private Function SendRequest(uri As String, jsonDataBytes As Byte(), contentType As String, method As String) As String
-        Dim req As WebRequest = WebRequest.Create(uri)
-        req.ContentType = contentType
-        req.Method = method
-        req.ContentLength = jsonDataBytes.Length
-
-
-        Dim stream = req.GetRequestStream()
-        stream.Write(jsonDataBytes, 0, jsonDataBytes.Length)
-        stream.Close()
-
-        Dim response = req.GetResponse().GetResponseStream()
-
-        Dim reader As New StreamReader(response)
-        Dim res = reader.ReadToEnd()
-        reader.Close()
-        response.Close()
-
-        Return res
-    End Function
-
-    Function GetJSON() As String
-        Dim json As New System.Web.Script.Serialization.JavaScriptSerializer()
-
-        Try
-            'Dim xml_Doc As XmlDocument = New XmlDocument()
-            'xml_Doc.Load("json.xml")
-            'Return json.Serialize(DataSetToJSON(New DataSet().ReadXml(xml_Doc)))
-            'reader 
-            'Dim reader As XmlReader = JsonReaderWriterFactory.CreateJsonReader(Encoding.Default.GetBytes(jsonDocuments), XmlDictionaryReaderQuotas.Max)
-            'Dim Xml = New XmlDocument()
-            'Xml.Load(reader)
-
-        Catch ex As Exception
-            MsgBox(ex.ToString)
-            Return ("0")
-        End Try
-
-    End Function
-
-    Function DataSetToJSON(ds As DataSet) As String
-        Dim dict As New Dictionary(Of String, Object)
-
-        For Each dt As DataTable In ds.Tables
-            Dim arr(dt.Rows.Count) As Object
-
-            For i As Integer = 0 To dt.Rows.Count - 1
-                arr(i) = dt.Rows(i).ItemArray
+            sPathElatic = regKey.GetValue("Location")
+            log.Debug(sPathElatic)
+            lines = IO.File.ReadAllLines(sPathElatic & "\config\elasticsearch.yml")
+            For i As Integer = 0 To lines.Length - 1
+                If lines(i).StartsWith("network.host: ") Then
+                    sReturn(0) = lines(i)
+                    log.Debug(sReturn(0))
+                    sReturn(0) = Strings.Mid(sReturn(0), (Strings.InStr(sReturn(0), ":") + 2))
+                    Exit For
+                End If
             Next
+            For i As Integer = 0 To lines.Length - 1
+                If lines(i).StartsWith("http.port: ") Then
+                    sReturn(1) = lines(i)
+                    log.Debug(sReturn(1))
+                    sReturn(1) = Strings.Mid(sReturn(1), (Strings.InStr(sReturn(1), ":") + 2))
+                    Exit For
+                End If
+            Next
+            log.Debug(sReturn(0) + ":" + sReturn(1))
 
-            dict.Add(dt.TableName, arr)
-        Next
+        Catch
+            sReturn(0) = "10.10.77.182"
+            sReturn(1) = "8041"
+        End Try
 
-        Dim json As New JavaScriptSerializer
-        Return json.Serialize(dict)
+        Return sReturn
     End Function
 
+#Region "Testing"
     Function WriteXML()
         Dim enc As New System.Text.UTF8Encoding
         Dim xmlString As XmlTextWriter = New XmlTextWriter("json.xml", enc)
@@ -258,67 +185,6 @@ Module HelperClass
         Else
             Return Fehler
         End If
-    End Function
-
-    Sub AddLabel()
-
-    End Sub
-
-#Region "OBSOLETE"
-
-    Function GetHealth()
-        Try
-            Dim webClient As New System.Net.WebClient
-            Dim sResult As String = webClient.DownloadString("http://" + gsIPAdress + "/_cluster/health")
-            Try
-                Dim sSplit As String = Strings.Mid(sResult, Strings.InStr(sResult, "tus") + 6)
-                sSplit = Strings.Left(sSplit, Strings.InStr(sSplit, ",") - 2)
-                Return (sSplit)
-
-            Catch ex As Exception
-                Return ("Fehler bei Split")
-            End Try
-        Catch ex As Exception
-            Return ("Fehler bei Get")
-        End Try
-    End Function
-
-    Function GetShardsNumber()
-        Try
-            Dim webClient As New System.Net.WebClient
-            Dim sResult As String = webClient.DownloadString("http://" + gsIPAdress + "/enaioblue_*/_settings/index.number_of_shards")
-            Dim sSplit = Strings.Mid(sResult, (Strings.InStr(sResult, "rds") + 6))
-            sSplit = Strings.Left(sSplit, (Strings.InStr(sSplit, "}") - 2))
-            Return (sSplit)
-        Catch ex As Exception
-            Return ("Fehler")
-        End Try
-        'Dim sResult As String
-        'Try
-        '    Dim webClient As New System.Net.WebClient
-        '    'Dim rawresp As String = webClient.DownloadString("http://" + gsIPAdress + "/enaioblue_*/_settings/index.number_of_replicas")
-        '    Dim rawresp As String = webClient.DownloadString("{enaioblue_0: {settings: {index: {number_of_shards: ""6"",number_of_replicas: ""1""}}}}")
-        '    Dim jss As New JavaScriptSerializer()
-        '    Dim dict As Dictionary(Of String, String) = jss.Deserialize(Of Dictionary(Of String, String))(rawresp)
-
-        '    sResult = dict("number_of_replicas")
-        '    Return sResult
-        'Catch ex As Exception
-        '    Return ("Fe")
-        'End Try
-
-    End Function
-
-    Function GetReplicasNumber()
-        Try
-            Dim webClient As New System.Net.WebClient
-            Dim sResult As String = webClient.DownloadString("http://" + gsIPAdress + "/enaioblue_*/_settings/index.number_of_replicas")
-            Dim sSplit = Strings.Mid(sResult, (Strings.InStr(sResult, "cas") + 6))
-            sSplit = Strings.Left(sSplit, (Strings.InStr(sSplit, "}") - 2))
-            Return (sSplit)
-        Catch ex As Exception
-            Return ("Fehler")
-        End Try
     End Function
 #End Region
 

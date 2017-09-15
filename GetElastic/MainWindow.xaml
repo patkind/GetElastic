@@ -10,7 +10,7 @@
         <Button x:Name="btnConnect" Content="Connect" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="80,89,0,0"/>
         <Button x:Name="btnQuit" Content="Quit" HorizontalAlignment="Left" Margin="779,509,0,0" VerticalAlignment="Top" Width="75"/>
         <Ellipse x:Name="elipStatus" Fill="Lime" HorizontalAlignment="Left" Height="75" Margin="560,50,0,0" Stroke="Black" VerticalAlignment="Top" Width="75"/>
-        <Button x:Name="btnTest" Content="Test" HorizontalAlignment="Left" Margin="223,28,0,0" VerticalAlignment="Top" Width="75"/>
+        <Button x:Name="btnTest" Content="Replica 1" HorizontalAlignment="Left" Margin="223,28,0,0" VerticalAlignment="Top" Width="75"/>
         <Label x:Name="lblStatus" Content="Status" HorizontalAlignment="Left" Margin="573,19,0,0" VerticalAlignment="Top"/>
         <Label x:Name="lblIP" Content="IP-Address" HorizontalAlignment="Left" Margin="13,25,0,0" VerticalAlignment="Top"/>
         <Label x:Name="lblPort" Content="Port" HorizontalAlignment="Left" Margin="13,53,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.442,2.36"/>
@@ -20,10 +20,10 @@
         <TextBox x:Name="txtShards" HorizontalAlignment="Left" Height="23" Margin="80,137,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Background="WhiteSmoke" IsEnabled="False"/>
         <Label x:Name="lblReplicas" Content="Replicas" HorizontalAlignment="Left" Margin="236,133,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.442,2.36"/>
         <TextBox x:Name="txtReplicas" HorizontalAlignment="Left" Height="23" Margin="303,137,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Background="WhiteSmoke" IsEnabled="False"/>
-        <Button x:Name="btnTest2" Content="Test2" HorizontalAlignment="Left" Margin="303,28,0,0" VerticalAlignment="Top" Width="75"/>
+        <Button x:Name="btnTest2" Content="Replica 0" HorizontalAlignment="Left" Margin="303,28,0,0" VerticalAlignment="Top" Width="75"/>
         <Button x:Name="btnWriteXML" Content="Write XML" HorizontalAlignment="Left" Margin="383,28,0,0" VerticalAlignment="Top" Width="75"/>
         <Label x:Name="lblIndexName" Content="Indexname" HorizontalAlignment="Left" Margin="125,206,0,0" VerticalAlignment="Top" FontWeight="Bold" ToolTip="Name des Indexes" Width="74" Height="25" Padding="0,5,5,5"/>
-        <Button x:Name="btnAddLabel" Content="Add Label" HorizontalAlignment="Left" Margin="266,79,0,0" VerticalAlignment="Top" Width="75"/>
+        <Button x:Name="btnAddLabel" Content="Add Label (old)" HorizontalAlignment="Left" Margin="266,79,0,0" VerticalAlignment="Top" Width="92"/>
         <ProgressBar x:Name="pgRefreshShards" HorizontalAlignment="Left" Height="20" Margin="681,89,0,0" VerticalAlignment="Top" Width="173" Maximum="25" IsTabStop="False" IsIndeterminate="True" LargeChange="0.5" Cursor="None" IsEnabled="False" Value="2"/>
 
     </Grid>
